@@ -59,14 +59,14 @@ exports.getAllCategories = async (req, res) => {
 
 exports.getDetailsCategory = async (request, res) => {
   try {
-    // validate req.params
-    const { error } = validationHelper.getDetailsCategoryValidation(
-      request.params
+    // validate req.query
+    const { error } = validationHelper.categoryReqQueryValidation(
+      request.query
     );
     if (error)
       return res.status(400).send(Boom.badRequest(error.details[0].message));
 
-    const { categoryID } = request.params;
+    const { categoryID } = request.query;
 
     // find similar category in db
     const findByID = await Categories.findByPk(categoryID);
@@ -96,12 +96,14 @@ exports.getDetailsCategory = async (request, res) => {
 
 exports.deleteCategory = async (request, res) => {
   try {
-    // validate req.params
-    const { error } = validationHelper.deleteCategoryValidation(request.params);
+    // validate req.query
+    const { error } = validationHelper.categoryReqQueryValidation(
+      request.query
+    );
     if (error)
       return res.status(400).send(Boom.badRequest(error.details[0].message));
 
-    const { categoryID } = request.params;
+    const { categoryID } = request.query;
 
     // find similar category in db
     const findByID = await Categories.findByPk(categoryID);
@@ -139,11 +141,13 @@ exports.deleteCategory = async (request, res) => {
 exports.updateCategory = async (request, res) => {
   try {
     // validate req.body
-    const { error } = validationHelper.updateCategoryValidation(request.body);
+    const { error } =
+      validationHelper.updateCategoryValidation(request.body) &&
+      validationHelper.categoryReqQueryValidation(request.query);
     if (error)
       return res.status(400).send(Boom.badRequest(error.details[0].message));
 
-    const { categoryID } = request.params;
+    const { categoryID } = request.query;
     const { category_name } = request.body;
 
     // find similar category in db

@@ -1,6 +1,8 @@
 const { Brands } = require("../../models");
 const Boom = require("boom");
 const validationHelper = require("../helpers/validationHelper");
+const deleteFileHelper = require("../helpers/deleteFileHelper");
+
 const mediaLocation = "http://localhost:5000/";
 
 exports.postBrands = async (request, res) => {
@@ -54,7 +56,12 @@ exports.getAllBrands = async (req, res) => {
 
 exports.getDetailsBrand = async (request, res) => {
   try {
-    const { brandID } = request.params;
+    // validate req.query
+    const { error } = validationHelper.brandReqQueryValidation(request.query);
+    if (error)
+      return res.status(400).send(Boom.badRequest(error.details[0].message));
+
+    const { brandID } = request.query;
 
     // find similar category in db
     const findByID = await Brands.findByPk(brandID);
@@ -83,8 +90,14 @@ exports.getDetailsBrand = async (request, res) => {
 };
 
 exports.deleteBrand = async (request, res) => {
-  const { brandID } = request.params;
   try {
+    // validate req.query
+    const { error } = validationHelper.brandReqQueryValidation(request.query);
+    if (error)
+      return res.status(400).send(Boom.badRequest(error.details[0].message));
+
+    const { brandID } = request.query;
+
     // find similar category in db
     const findByID = await Brands.findByPk(brandID);
     if (findByID === null) {
@@ -92,6 +105,9 @@ exports.deleteBrand = async (request, res) => {
         .status(400)
         .send(Boom.badRequest(`Brand on id ${brandID} Not Found`));
     }
+
+    // delete file on folder uploads
+    deleteFileHelper.deleteFileUnlink(findByID.logo.slice(22));
 
     // delete data by PK
     await Brands.destroy({
@@ -115,7 +131,7 @@ exports.deleteBrand = async (request, res) => {
 
 exports.updateBrandLogo = async (request, res) => {
   try {
-    const { brandID } = request.params;
+    const { brandID } = request.query;
     const logoFile = request.files.media_file[0].filename;
 
     // find similar category in db
@@ -125,6 +141,9 @@ exports.updateBrandLogo = async (request, res) => {
         .status(400)
         .send(Boom.badRequest(`Brand on id ${brandID} Not Found`));
     }
+
+    // delete file on folder uploads
+    deleteFileHelper.deleteFileUnlink(findByID.logo.slice(22));
 
     // update data by PK
     await Brands.update(
@@ -158,7 +177,7 @@ exports.updateBrandLogo = async (request, res) => {
 
 exports.updateBrandData = async (request, res) => {
   try {
-    const { brandID } = request.params;
+    const { brandID } = request.query;
     const logoFile = request.files.media_file[0].filename;
     const { error } = validationHelper.postBrandValidation(request.body);
     if (error)

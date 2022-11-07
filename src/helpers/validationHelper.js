@@ -7,14 +7,7 @@ const postCategoryValidation = (data) => {
   return schema.validate(data);
 };
 
-const getDetailsCategoryValidation = (data) => {
-  const schema = Joi.object({
-    categoryID: Joi.number().required(),
-  });
-  return schema.validate(data);
-};
-
-const deleteCategoryValidation = (data) => {
+const categoryReqQueryValidation = (data) => {
   const schema = Joi.object({
     categoryID: Joi.number().required(),
   });
@@ -35,14 +28,7 @@ const postTagValidation = (data) => {
   return schema.validate(data);
 };
 
-const getDetailTagsValidation = (data) => {
-  const schema = Joi.object({
-    tagID: Joi.number().required(),
-  });
-  return schema.validate(data);
-};
-
-const deleteTagValidation = (data) => {
+const tagReqQueryValidation = (data) => {
   const schema = Joi.object({
     tagID: Joi.number().required(),
   });
@@ -63,6 +49,13 @@ const postMediaValidation = (data) => {
   return schema.validate(data);
 };
 
+const mediaReqQueryValidation = (data) => {
+  const schema = Joi.object({
+    mediaID: Joi.number().required(),
+  });
+  return schema.validate(data);
+};
+
 const postBrandValidation = (data) => {
   const schema = Joi.object({
     brand_name: Joi.string().required(),
@@ -70,15 +63,22 @@ const postBrandValidation = (data) => {
   });
   return schema.validate(data);
 };
+
+const brandReqQueryValidation = (data) => {
+  const schema = Joi.object({
+    brandID: Joi.number().required(),
+  });
+  return schema.validate(data);
+};
 module.exports = {
   postCategoryValidation,
-  getDetailsCategoryValidation,
-  deleteCategoryValidation,
+  categoryReqQueryValidation,
   updateCategoryValidation,
   postTagValidation,
-  getDetailTagsValidation,
-  deleteTagValidation,
+  tagReqQueryValidation,
+  mediaReqQueryValidation,
   updateTagValidation,
   postMediaValidation,
   postBrandValidation,
+  brandReqQueryValidation,
 };

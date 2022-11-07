@@ -59,12 +59,12 @@ exports.getAllTags = async (req, res) => {
 
 exports.getDetailTag = async (request, res) => {
   try {
-    // validate req.params
-    const { error } = validationHelper.getDetailTagsValidation(request.params);
+    // validate req.query
+    const { error } = validationHelper.tagReqQueryValidation(request.query);
     if (error)
       return res.status(400).send(Boom.badRequest(error.details[0].message));
 
-    const { tagID } = request.params;
+    const { tagID } = request.query;
 
     // find similar category in db
     const findByID = await Tags.findByPk(tagID);
@@ -94,12 +94,12 @@ exports.getDetailTag = async (request, res) => {
 
 exports.deleteTag = async (request, res) => {
   try {
-    // validate req.params
-    const { error } = validationHelper.deleteTagValidation(request.params);
+    // validate req.query
+    const { error } = validationHelper.tagReqQueryValidation(request.query);
     if (error)
       return res.status(400).send(Boom.badRequest(error.details[0].message));
 
-    const { tagID } = request.params;
+    const { tagID } = request.query;
 
     // find similar tag in db
     const findByID = await Tags.findByPk(tagID);
@@ -141,7 +141,7 @@ exports.updateTag = async (request, res) => {
     if (error)
       return res.status(400).send(Boom.badRequest(error.details[0].message));
 
-    const { tagID } = request.params;
+    const { tagID } = request.query;
     const { tag_name } = request.body;
 
     // find similar tag in db

@@ -1,6 +1,8 @@
 const { Media } = require("../../models");
 const Boom = require("boom");
 const mediaLocation = "http://localhost:5000/";
+const validationHelper = require("../helpers/validationHelper");
+const deleteFileHelper = require("../helpers/deleteFileHelper");
 
 exports.postMedia = async (request, res) => {
   try {
@@ -46,7 +48,10 @@ exports.getAllMedia = async (req, res) => {
 
 exports.getDetailsMedia = async (request, res) => {
   try {
-    const { mediaID } = request.params;
+    const { error } = validationHelper.mediaReqQueryValidation(request.query);
+    if (error)
+      return res.status(400).send(Boom.badRequest(error.details[0].message));
+    const { mediaID } = request.query;
 
     // find similar category in db
     const findByID = await Media.findByPk(mediaID);
@@ -75,13 +80,15 @@ exports.getDetailsMedia = async (request, res) => {
 };
 
 exports.deleteMedia = async (request, res) => {
-  const { mediaID } = request.params;
+  const { mediaID } = request.query;
   try {
     // find similar category in db
     const findByID = await Media.findByPk(mediaID);
     if (findByID === null) {
       return res.status(400).send(Boom.badRequest("MEDIA_NOT_FOUND"));
     }
+    // delete file on folder uploads
+    deleteFileHelper.deleteFileUnlink(findByID.media_url.slice(22));
 
     // delete data by PK
     await Media.destroy({
@@ -105,11 +112,12 @@ exports.deleteMedia = async (request, res) => {
 
 exports.updateMedia = async (request, res) => {
   try {
-    const { mediaID } = request.params;
+    const { mediaID } = request.query;
     const media = request.files.media_file[0].filename;
 
     // find similar category in db
     const findByID = await Media.findByPk(mediaID);
+    deleteFileHelper.deleteFileUnlink(findByID.media_url.slice(22));
     if (findByID === null) {
       return res.status(400).send(Boom.badRequest("MEDIA_NOT_FOUND"));
     }
