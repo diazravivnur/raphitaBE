@@ -129,6 +129,80 @@ exports.deleteBrand = async (request, res) => {
   }
 };
 
+exports.setPublishedBrand = async (request, res) => {
+  try {
+    // validate req.query
+    const { error } = validationHelper.brandReqQueryValidation(request.query);
+    if (error)
+      return res.status(400).send(Boom.badRequest(error.details[0].message));
+
+    const { brandID } = request.query;
+
+    // find similar category in db
+    const findByID = await Brands.findByPk(brandID);
+    if (findByID === null) {
+      return res
+        .status(400)
+        .send(Boom.badRequest(`Brand on id ${brandID} Not Found`));
+    }
+    await Brands.update(
+      { isPublished: true },
+      {
+        where: {
+          id: brandID,
+        },
+      }
+    );
+    return res.status(200).send({
+      statusCode: "200",
+      status: "Succes",
+      message: `Brand id ${brandID} Has Been Published`,
+    });
+  } catch (error) {
+    res.status(500).send({
+      status: "failed",
+      message: error,
+    });
+  }
+};
+
+exports.unPublishBrand = async (request, res) => {
+  try {
+    // validate req.query
+    const { error } = validationHelper.brandReqQueryValidation(request.query);
+    if (error)
+      return res.status(400).send(Boom.badRequest(error.details[0].message));
+
+    const { brandID } = request.query;
+
+    // find similar category in db
+    const findByID = await Brands.findByPk(brandID);
+    if (findByID === null) {
+      return res
+        .status(400)
+        .send(Boom.badRequest(`Brand on id ${brandID} Not Found`));
+    }
+    await Brands.update(
+      { isPublished: false },
+      {
+        where: {
+          id: brandID,
+        },
+      }
+    );
+    return res.status(200).send({
+      statusCode: "200",
+      status: "Succes",
+      message: `Brand id ${brandID} Has Been Unpublished`,
+    });
+  } catch (error) {
+    res.status(500).send({
+      status: "failed",
+      message: error,
+    });
+  }
+};
+
 exports.updateBrandLogo = async (request, res) => {
   try {
     const { brandID } = request.query;

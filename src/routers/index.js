@@ -36,6 +36,8 @@ const {
   deleteBrand,
   updateBrandLogo,
   updateBrandData,
+  setPublishedBrand,
+  unPublishBrand,
 } = require("../controllers/brands");
 
 // ROUTE CATEGORY API
@@ -64,7 +66,9 @@ router.post("/brand", uploadFile("media_file"), postBrands);
 router.get("/brands", getAllBrands);
 router.get("/brand", getDetailsBrand);
 router.delete("/brand", deleteBrand);
-router.put("/brand/logo/:brandID", uploadFile("media_file"), updateBrandLogo);
-router.put("/brand/data/:brandID", uploadFile("media_file"), updateBrandData);
+router.put("/brand/logo", uploadFile("media_file"), updateBrandLogo);
+router.put("/brand/data", uploadFile("media_file"), updateBrandData);
+router.put("/brand/publish", setPublishedBrand);
+router.put("/brand/unpublish", unPublishBrand);
 
 module.exports = router;

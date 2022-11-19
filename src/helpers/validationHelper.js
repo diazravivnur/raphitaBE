@@ -70,6 +70,23 @@ const brandReqQueryValidation = (data) => {
   });
   return schema.validate(data);
 };
+
+const paramsValidation = Joi.object({
+  brandID: Joi.number().required(),
+}).unknown(true);
+
+const bodyValidation = Joi.object({
+  media_file: Joi.string().required(),
+}).unknown(true);
+
+const updateBrandValidation = (data) => {
+  const schema = Joi.object({
+    query: paramsValidation,
+    body: bodyValidation,
+  });
+  return schema.validate(data);
+};
+
 module.exports = {
   postCategoryValidation,
   categoryReqQueryValidation,
@@ -81,4 +98,5 @@ module.exports = {
   postMediaValidation,
   postBrandValidation,
   brandReqQueryValidation,
+  updateBrandValidation,
 };
