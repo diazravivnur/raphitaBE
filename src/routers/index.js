@@ -40,6 +40,13 @@ const {
   unPublishBrand,
 } = require("../controllers/brands");
 
+const {
+  getAllProducts,
+  postProducts,
+  addProductAndMedia,
+  addProductTags
+} = require("../controllers/products");
+
 // ROUTE CATEGORY API
 router.post("/category", postCategory);
 router.get("/categories", getAllCategories);
@@ -70,5 +77,11 @@ router.put("/brand/logo", uploadFile("media_file"), updateBrandLogo);
 router.put("/brand/data", uploadFile("media_file"), updateBrandData);
 router.put("/brand/publish", setPublishedBrand);
 router.put("/brand/unpublish", unPublishBrand);
+
+// ROUTE PRODUCTS API
+router.get("/products", getAllProducts);
+router.post("/product", postProducts);
+router.post("/product-media", addProductAndMedia);
+router.post("/product-tag", addProductTags);
 
 module.exports = router;

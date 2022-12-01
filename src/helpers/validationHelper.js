@@ -87,6 +87,33 @@ const updateBrandValidation = (data) => {
   return schema.validate(data);
 };
 
+const postProductsValidation = (data) => {
+  const schema = Joi.object({
+    product_name: Joi.string().required(),
+    brandId: Joi.number().required(),
+    title: Joi.string().required(),
+    subtitle: Joi.string().required(),
+    description: Joi.string().required(),
+  });
+  return schema.validate(data);
+};
+
+const mediaProductsValidation = (data) => {
+  const schema = Joi.object({
+    mediaId: Joi.number().required(),
+    ProductId: Joi.number().required(),
+  });
+  return schema.validate(data);
+};
+
+const tagsProductsValidation = (data) => {
+  const schema = Joi.object({
+    tagId: Joi.number().required(),
+    ProductId: Joi.number().required(),
+  });
+  return schema.validate(data);
+};
+
 module.exports = {
   postCategoryValidation,
   categoryReqQueryValidation,
@@ -99,4 +126,7 @@ module.exports = {
   postBrandValidation,
   brandReqQueryValidation,
   updateBrandValidation,
+  postProductsValidation,
+  mediaProductsValidation,
+  tagsProductsValidation
 };
