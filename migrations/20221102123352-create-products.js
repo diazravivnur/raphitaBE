@@ -21,6 +21,24 @@ module.exports = {
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
       },
+      summary: {
+        type: Sequelize.STRING,
+      },
+      brightness: {
+        type: Sequelize.STRING,
+      },
+      watt: {
+        type: Sequelize.STRING,
+      },
+      type: {
+        type: Sequelize.STRING,
+      },
+      materials: {
+        type: Sequelize.STRING,
+      },
+      iprating: {
+        type: Sequelize.STRING,
+      },
       title: {
         type: Sequelize.STRING,
       },
