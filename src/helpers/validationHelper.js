@@ -90,10 +90,14 @@ const updateBrandValidation = (data) => {
 const postProductsValidation = (data) => {
   const schema = Joi.object({
     product_name: Joi.string().required(),
+    brightness: Joi.string().required(),
+    watt: Joi.string().required(),
+    type: Joi.string().required(),
+    materials: Joi.string().required(),
+    iprating: Joi.string().required(),
+    summary: Joi.string().required(),
     brandId: Joi.number().required(),
-    title: Joi.string().required(),
-    subtitle: Joi.string().required(),
-    description: Joi.string().required(),
+    description: Joi.string().optional(),
   });
   return schema.validate(data);
 };
@@ -114,6 +118,14 @@ const tagsProductsValidation = (data) => {
   return schema.validate(data);
 };
 
+const productReqQueryValidation = (data) => {
+  const schema = Joi.object({
+    productID: Joi.number().required(),
+  });
+  return schema.validate(data);
+};
+
+
 module.exports = {
   postCategoryValidation,
   categoryReqQueryValidation,
@@ -128,5 +140,6 @@ module.exports = {
   updateBrandValidation,
   postProductsValidation,
   mediaProductsValidation,
-  tagsProductsValidation
+  tagsProductsValidation,
+  productReqQueryValidation
 };

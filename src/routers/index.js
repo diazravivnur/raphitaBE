@@ -4,6 +4,7 @@ const router = express.Router();
 
 const { auth } = require("../middlewares/auth");
 const { uploadFile } = require("../middlewares/uploadFile");
+const { uploadMediaFile } = require("../middlewares/uploadMediaFile");
 
 const {
   postCategory,
@@ -44,7 +45,8 @@ const {
   getAllProducts,
   postProducts,
   addProductAndMedia,
-  addProductTags
+  addProductTags,
+  getDetailProduct
 } = require("../controllers/products");
 
 // ROUTE CATEGORY API
@@ -83,5 +85,6 @@ router.get("/products", getAllProducts);
 router.post("/product", postProducts);
 router.post("/product-media", addProductAndMedia);
 router.post("/product-tag", addProductTags);
+router.get("/product", getDetailProduct);
 
 module.exports = router;

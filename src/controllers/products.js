@@ -115,3 +115,54 @@ exports.addProductTags = async (request, res) => {
     });
   }
 };
+
+exports.getDetailProduct = async (request, res) => {
+  try {
+    const { error } = validationHelper.productReqQueryValidation(request.query);
+    if (error)
+      return res.status(400).send(Boom.badRequest(error.details[0].message));
+    const { productID } = request.query;
+
+    // find similar category in db
+    const findByID = await Products.findByPk(productID);
+    if (findByID === null) {
+      return res.status(400).send(Boom.badRequest("MEDIA_NOT_FOUND"));
+    }
+
+    // get data by PK
+    const response = await Products.findAll({
+      where: {
+        id: productID,
+      },
+      include: [
+        {
+          model: Brands,
+        },
+        {
+          model: Media, 
+          through: MediaProducts,
+          as : 'medias'
+        },
+        {
+          model: Tags, 
+          through: TagProducts,
+          as : 'tags'
+        }
+      ],
+      attributes: {
+        exclude: ["createdAt", "updatedAt"],
+      }
+    });
+
+    return res.status(200).send({
+      statusCode: "200",
+      status: "Success",
+      data: response,
+    });
+  } catch (error) {
+    res.status(500).send({
+      status: "failed",
+      message: error,
+    });
+  }
+};
