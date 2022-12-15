@@ -63,7 +63,7 @@ exports.getDetailsBrand = async (request, res) => {
 
     const { brandID } = request.query;
 
-    // find similar category in db
+    // find similar brand in db
     const findByID = await Brands.findByPk(brandID);
     if (findByID === null) {
       return res.status(400).send(Boom.badRequest("BRAND_NOT_FOUND"));
@@ -98,7 +98,7 @@ exports.deleteBrand = async (request, res) => {
 
     const { brandID } = request.query;
 
-    // find similar category in db
+    // find similar brand in db
     const findByID = await Brands.findByPk(brandID);
     if (findByID === null) {
       return res
@@ -138,7 +138,7 @@ exports.setPublishedBrand = async (request, res) => {
 
     const { brandID } = request.query;
 
-    // find similar category in db
+    // find similar brand in db
     const findByID = await Brands.findByPk(brandID);
     if (findByID === null) {
       return res
@@ -175,7 +175,7 @@ exports.unPublishBrand = async (request, res) => {
 
     const { brandID } = request.query;
 
-    // find similar category in db
+    // find similar brand in db
     const findByID = await Brands.findByPk(brandID);
     if (findByID === null) {
       return res
@@ -208,7 +208,7 @@ exports.updateBrandLogo = async (request, res) => {
     const { brandID } = request.query;
     const logoFile = request.files.media_file[0].filename;
 
-    // find similar category in db
+    // find similar brand in db
     const findByID = await Brands.findByPk(brandID);
     if (findByID === null) {
       return res
@@ -257,7 +257,7 @@ exports.updateBrandData = async (request, res) => {
     if (error)
       return res.status(400).send(Boom.badRequest(error.details[0].message));
 
-    // find similar category in db
+    // find similar brand in db
     const findByID = await Brands.findByPk(brandID);
     if (findByID === null) {
       return res

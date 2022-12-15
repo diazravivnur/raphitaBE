@@ -9,7 +9,7 @@ exports.getAllProducts = async (request, res) => {
   if (error)
     return res.status(400).send(Boom.badRequest(error.details[0].message))  
   try {
-    const page = request.query
+    const { page } = request.query
     const products = await Products.findAll({
       include: [
         {
@@ -30,13 +30,12 @@ exports.getAllProducts = async (request, res) => {
         exclude: ["createdAt", "updatedAt"],
       },
     });
-    const dataCount  = await products.length
-    const pagination = await paginationFunction(page, dataCount)
+    const response = await paginationFunction(products, page)
 
     res.status(200).send({
       statusCode: "200",
       status: "success",
-      data: {products, pagination},
+      data: response,
     });
   } catch (error) {
     console.log(error);
@@ -203,13 +202,12 @@ exports.getAllProductsWhereBrand = async (request, res) => {
         exclude: ["createdAt", "updatedAt"],
       },
     });
-    const dataCount  = await products.length
-    const pagination = await paginationFunction(page, dataCount)
+    const response = await paginationFunction(products, page)
 
     res.status(200).send({
       statusCode: "200",
       status: "success",
-      data: {products, pagination},
+      data: response,
     });
   } catch (error) {
     console.log(error);
@@ -237,13 +235,12 @@ exports.getAllProductsWhereTag = async (request, res) => {
       },
     });
 
-    const dataCount  = await products.length
-    const pagination = await paginationFunction(page, dataCount)
+    const response = await paginationFunction(products, page)
 
     res.status(200).send({
       statusCode: "200",
       status: "success",
-      data: {products, pagination},
+      data: response,
     });
   } catch (error) {
     console.log(error);
@@ -254,13 +251,13 @@ exports.getAllProductsWhereTag = async (request, res) => {
   }
 };
 
-const paginationFunction = async (page, dataCount) => {
-    const limit = 12
-    const startIndex = (page - 1) * limit;
+const paginationFunction = async (data, page) => {
+  const limit = 12
+  const startIndex = (page - 1) * limit;
     const endIndex = page * limit;
 
     const results = {};
-    if (endIndex < dataCount) {
+    if (endIndex < data.length) {
         results.next = {
             page: page + 1,
         };
@@ -273,9 +270,9 @@ const paginationFunction = async (page, dataCount) => {
     results.currentPage = {
         startPage: 1,
         page,
-        endPage: Math.ceil(dataCount / limit),
+        endPage: Math.ceil(data.length / limit),
     };
-    results.count = dataCount;
-
-    return results
+    results.count = data.length;
+    results.rows = data.slice(startIndex, endIndex);
+    return results;
 };
