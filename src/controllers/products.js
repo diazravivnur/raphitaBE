@@ -3,9 +3,14 @@ const Boom = require("boom");
 const validationHelper = require("../helpers/validationHelper");
 const deleteFileHelper = require("../helpers/deleteFileHelper");
 
-exports.getAllProducts = async (req, res) => {
+exports.getAllProducts = async (request, res) => {
+  // validate req.body
+  const { error } = validationHelper.getAllProductsValidation(request.query);
+  if (error)
+    return res.status(400).send(Boom.badRequest(error.details[0].message))  
   try {
-    const response = await Products.findAll({
+    const page = request.query
+    const products = await Products.findAll({
       include: [
         {
           model: Brands,
@@ -25,11 +30,13 @@ exports.getAllProducts = async (req, res) => {
         exclude: ["createdAt", "updatedAt"],
       },
     });
+    const dataCount  = await products.length
+    const pagination = await paginationFunction(page, dataCount)
 
     res.status(200).send({
       statusCode: "200",
       status: "success",
-      data: response,
+      data: {products, pagination},
     });
   } catch (error) {
     console.log(error);
@@ -165,4 +172,110 @@ exports.getDetailProduct = async (request, res) => {
       message: error,
     });
   }
+};
+
+exports.getAllProductsWhereBrand = async (request, res) => {
+  const { error } = validationHelper.productFindBrandReqQueryValidation(request.query);
+  if (error)
+    return res.status(400).send(Boom.badRequest(error.details[0].message));
+  const { brandId, page } = request.query;
+  try {
+    const products = await Products.findAll({
+      where : {
+        brandId : brandId
+      },
+      include: [
+        {
+          model: Brands,
+        },
+        {
+          model: Media, 
+          through: MediaProducts,
+          as : 'medias'
+        },
+        {
+          model: Tags, 
+          through: TagProducts,
+          as : 'tags'
+        }
+      ],
+      attributes: {
+        exclude: ["createdAt", "updatedAt"],
+      },
+    });
+    const dataCount  = await products.length
+    const pagination = await paginationFunction(page, dataCount)
+
+    res.status(200).send({
+      statusCode: "200",
+      status: "success",
+      data: {products, pagination},
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      status: "failed",
+      message: error,
+    });
+  }
+};
+
+exports.getAllProductsWhereTag = async (request, res) => {
+  const { error } = validationHelper.productFindTagReqQueryValidation(request.body);
+  if (error)
+    return res.status(400).send(Boom.badRequest(error.details[0].message));
+  const { tagId, page } = request.body;
+  try {
+    const products = await Products.findAll({
+      include: [{
+        model:Tags, 
+        as: 'tags',
+        through: { where: { tagId: tagId } }
+    }],
+      attributes: {
+        exclude: ["createdAt", "updatedAt"],
+      },
+    });
+
+    const dataCount  = await products.length
+    const pagination = await paginationFunction(page, dataCount)
+
+    res.status(200).send({
+      statusCode: "200",
+      status: "success",
+      data: {products, pagination},
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      status: "failed",
+      message: error,
+    });
+  }
+};
+
+const paginationFunction = async (page, dataCount) => {
+    const limit = 12
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+
+    const results = {};
+    if (endIndex < dataCount) {
+        results.next = {
+            page: page + 1,
+        };
+    }
+    if (startIndex > 0) {
+        results.previous = {
+            page: page - 1,
+        };
+    }
+    results.currentPage = {
+        startPage: 1,
+        page,
+        endPage: Math.ceil(dataCount / limit),
+    };
+    results.count = dataCount;
+
+    return results
 };

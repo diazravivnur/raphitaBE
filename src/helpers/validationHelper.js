@@ -125,6 +125,30 @@ const productReqQueryValidation = (data) => {
   return schema.validate(data);
 };
 
+const productFindBrandReqQueryValidation = (data) => {
+  const schema = Joi.object({
+    brandId: Joi.number().required(),
+    page: Joi.number().required()
+  });
+  return schema.validate(data);
+};
+
+const productFindTagReqQueryValidation = (data) => {
+  const schema = Joi.object({
+    tagId: Joi.array().required(),
+    page: Joi.number().required()
+  });
+  return schema.validate(data);
+};
+
+const getAllProductsValidation = (data) => {
+  const schema = Joi.object({
+    page: Joi.number().required(),
+  });
+  return schema.validate(data);
+};
+
+
 
 module.exports = {
   postCategoryValidation,
@@ -141,5 +165,8 @@ module.exports = {
   postProductsValidation,
   mediaProductsValidation,
   tagsProductsValidation,
-  productReqQueryValidation
+  productReqQueryValidation,
+  productFindBrandReqQueryValidation,
+  productFindTagReqQueryValidation,
+  getAllProductsValidation
 };

@@ -46,7 +46,9 @@ const {
   postProducts,
   addProductAndMedia,
   addProductTags,
-  getDetailProduct
+  getDetailProduct,
+  getAllProductsWhereBrand,
+  getAllProductsWhereTag
 } = require("../controllers/products");
 
 // ROUTE CATEGORY API
@@ -86,5 +88,7 @@ router.post("/product", postProducts);
 router.post("/product-media", addProductAndMedia);
 router.post("/product-tag", addProductTags);
 router.get("/product", getDetailProduct);
+router.get("/product-brand", getAllProductsWhereBrand);
+router.get("/product-tag", getAllProductsWhereTag);
 
 module.exports = router;
