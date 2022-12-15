@@ -144,6 +144,8 @@ const productFindTagReqQueryValidation = (data) => {
 const getAllProductsValidation = (data) => {
   const schema = Joi.object({
     page: Joi.number().required(),
+    brandId: Joi.number().optional(),
+    tagId: Joi.array().optional(),
   });
   return schema.validate(data);
 };
