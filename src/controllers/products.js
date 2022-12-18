@@ -2,7 +2,7 @@ const { Products, Brands, Media, MediaProducts, TagProducts, Tags } = require(".
 const { Op } = require('sequelize');
 const Boom = require("boom")
 const validationHelper = require("../helpers/validationHelper")
-const deleteFileHelper = require("../helpers/deleteFileHelper")
+const deleteFileHelper = require("../helpers/deleteFileHelper");
 
 exports.getAllProducts = async (request, res) => {
   // validate req.body
@@ -41,7 +41,8 @@ exports.getAllProducts = async (request, res) => {
         include: [{
           model:Tags, 
           as: 'tags',
-          through: { where: {tagId: { [Op.like]: `%${tagId}%` }, } }
+          through: TagProducts ,
+           where: {id: { [Op.in]: tagId } }
       }],
         attributes: {
           exclude: ["createdAt", "updatedAt"],
