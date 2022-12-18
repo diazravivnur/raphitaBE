@@ -42,7 +42,7 @@ exports.getAllProducts = async (request, res) => {
           model:Tags, 
           as: 'tags',
           through: TagProducts ,
-           where: {id: { [Op.in]: tagId } }
+           where: {id: { [Op.like]: tagId } }
       }],
         attributes: {
           exclude: ["createdAt", "updatedAt"],
