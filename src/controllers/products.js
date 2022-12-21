@@ -43,7 +43,12 @@ exports.getAllProducts = async (request, res) => {
           as: 'tags',
           through: TagProducts ,
            where: {id: { [Op.like]: tagId } }
-      }],
+      },
+      {
+        model: Media,
+        through: MediaProducts,
+        as: "medias",
+      },],
         attributes: {
           exclude: ["createdAt", "updatedAt"],
         },
