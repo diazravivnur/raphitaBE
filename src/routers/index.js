@@ -2,9 +2,9 @@ const express = require("express")
 
 const router = express.Router()
 
-const { auth } = require("../middlewares/auth")
-const { uploadFile } = require("../middlewares/uploadFile")
-const { uploadMediaFile } = require("../middlewares/uploadMediaFile")
+const { auth } = require("../middlewares/auth");
+const { uploadFile } = require("../middlewares/UploadFile");
+const { uploadMediaFile } = require("../middlewares/UploadMediaFile");
 
 const {
   postCategory,
