@@ -1,8 +1,9 @@
 const { Products, Brands, Media, MediaProducts, TagProducts, Tags } = require("../../models")
-const { Op } = require('sequelize');
+const { Op } = require("sequelize")
 const Boom = require("boom")
 const validationHelper = require("../helpers/validationHelper")
-const deleteFileHelper = require("../helpers/deleteFileHelper");
+const deleteFileHelper = require("../helpers/deleteFileHelper")
+const sequelize = require("sequelize")
 
 exports.getAllProducts = async (request, res) => {
   // validate req.body
@@ -11,10 +12,10 @@ exports.getAllProducts = async (request, res) => {
   try {
     const { page, brandId, tagId } = request.query
     const pageInt = parseInt(page)
-    let products 
+    let products
     if (brandId) {
       products = await Products.findAll({
-        where : {
+        where: {
           brandId: { [Op.like]: `%${brandId}%` },
         },
         include: [
@@ -38,17 +39,22 @@ exports.getAllProducts = async (request, res) => {
       })
     } else if (tagId) {
       products = await Products.findAll({
-        include: [{
-          model:Tags, 
-          as: 'tags',
-          through: TagProducts ,
-           where: {id: { [Op.like]: tagId } }
-      },
-      {
-        model: Media,
-        through: MediaProducts,
-        as: "medias",
-      },],
+        include: [
+          {
+            model: Brands,
+          },
+          {
+            model: Tags,
+            as: "tags",
+            through: TagProducts,
+            where: { id: { [Op.like]: tagId } },
+          },
+          {
+            model: Media,
+            through: MediaProducts,
+            as: "medias",
+          },
+        ],
         attributes: {
           exclude: ["createdAt", "updatedAt"],
         },
@@ -60,22 +66,22 @@ exports.getAllProducts = async (request, res) => {
             model: Brands,
           },
           {
-            model: Media, 
+            model: Media,
             through: MediaProducts,
-            as : 'medias'
+            as: "medias",
           },
           {
-            model: Tags, 
+            model: Tags,
             through: TagProducts,
-            as : 'tags'
-          }
+            as: "tags",
+          },
         ],
         attributes: {
           exclude: ["createdAt", "updatedAt"],
         },
       })
     }
-     
+
     const response = await paginationFunction(products, pageInt)
 
     res.status(200).send({
