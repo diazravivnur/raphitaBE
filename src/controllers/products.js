@@ -301,6 +301,70 @@ exports.getAllProductsWhereTag = async (request, res) => {
   }
 }
 
+exports.getProductsRecommendation = async (request, res) => {
+  try {
+    const vyrtychProduct = await Products.findAll({
+      limit: 4,
+      where: { brandId: { [Op.like]: `%${1}%` } },
+      include: [
+        {
+          model: Brands,
+        },
+        {
+          model: Media,
+          through: MediaProducts,
+          as: "medias",
+        },
+        {
+          model: Tags,
+          through: TagProducts,
+          as: "tags",
+        },
+      ],
+      attributes: {
+        exclude: ["createdAt", "updatedAt"],
+      },
+    })
+
+    const sinoamigoProduct = await Products.findAll({
+      limit: 4,
+      where: { brandId: { [Op.like]: `%${2}%` } },
+      include: [
+        {
+          model: Brands,
+        },
+        {
+          model: Media,
+          through: MediaProducts,
+          as: "medias",
+        },
+        {
+          model: Tags,
+          through: TagProducts,
+          as: "tags",
+        },
+      ],
+      attributes: {
+        exclude: ["createdAt", "updatedAt"],
+      },
+    })
+
+    const response = [...vyrtychProduct, ...sinoamigoProduct]
+
+    res.status(200).send({
+      statusCode: "200",
+      status: "success",
+      data: response,
+    })
+  } catch (error) {
+    console.log(error)
+    res.status(500).send({
+      status: "failed",
+      message: error,
+    })
+  }
+}
+
 const paginationFunction = async (data, page) => {
   const limit = 12
   const startIndex = (page - 1) * limit

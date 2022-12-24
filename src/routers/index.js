@@ -2,9 +2,9 @@ const express = require("express")
 
 const router = express.Router()
 
-const { auth } = require("../middlewares/auth");
-const { uploadFile } = require("../middlewares/UploadFile");
-const { uploadMediaFile } = require("../middlewares/UploadMediaFile");
+const { auth } = require("../middlewares/auth")
+const { uploadFile } = require("../middlewares/UploadFile")
+const { uploadMediaFile } = require("../middlewares/UploadMediaFile")
 
 const {
   postCategory,
@@ -43,6 +43,7 @@ const {
   getDetailProduct,
   getAllProductsWhereBrand,
   getAllProductsWhereTag,
+  getProductsRecommendation,
 } = require("../controllers/products")
 
 // ROUTE CATEGORY API
@@ -84,5 +85,6 @@ router.post("/product-tag", addProductTags)
 router.get("/product", getDetailProduct)
 router.get("/product-brand", getAllProductsWhereBrand)
 router.get("/product-tag", getAllProductsWhereTag)
+router.get("/product-recommendation", getProductsRecommendation)
 
 module.exports = router
