@@ -4,6 +4,7 @@ const validationHelper = require("../helpers/validationHelper");
 const deleteFileHelper = require("../helpers/deleteFileHelper");
 
 const mediaLocation = "http://localhost:5000/";
+const mediaLocationProd = "https://api.raphitajayamandiri.com/";
 
 exports.postBrands = async (request, res) => {
   try {
@@ -15,7 +16,7 @@ exports.postBrands = async (request, res) => {
 
     const response = await Brands.create({
       ...request.body,
-      logo: mediaLocation + logoFile,
+      logo: mediaLocationProd + logoFile,
       isPublished: false,
     });
 
@@ -107,7 +108,7 @@ exports.deleteBrand = async (request, res) => {
     }
 
     // delete file on folder uploads
-    deleteFileHelper.deleteFileUnlink(findByID.logo.slice(22));
+    deleteFileHelper.deleteFileUnlink(findByID.logo.slice(35));
 
     // delete data by PK
     await Brands.destroy({
@@ -217,11 +218,11 @@ exports.updateBrandLogo = async (request, res) => {
     }
 
     // delete file on folder uploads
-    deleteFileHelper.deleteFileUnlink(findByID.logo.slice(22));
+    deleteFileHelper.deleteFileUnlink(findByID.logo.slice(35));
 
     // update data by PK
     await Brands.update(
-      { logo: mediaLocation + logoFile },
+      { logo: mediaLocationProd + logoFile },
       {
         where: {
           id: brandID,
@@ -267,7 +268,7 @@ exports.updateBrandData = async (request, res) => {
 
     // update data by PK
     await Brands.update(
-      { logo: mediaLocation + logoFile, ...request.body },
+      { logo: mediaLocationProd + logoFile, ...request.body },
       {
         where: {
           id: brandID,
