@@ -150,6 +150,24 @@ const getAllProductsValidation = (data) => {
   return schema.validate(data);
 };
 
+const registerValidation = (data) => {
+  const schema = Joi.object({
+    email: Joi.string().email().required(),
+    password: Joi.string().optional(),
+    user_name: Joi.string().optional(),
+  });
+  return schema.validate(data);
+};
+
+const loginValidation = (data) => {
+  const schema = Joi.object({
+    email: Joi.string().email().required(),
+    password: Joi.string().optional(),
+  });
+  return schema.validate(data);
+};
+
+
 
 
 module.exports = {
@@ -170,5 +188,7 @@ module.exports = {
   productReqQueryValidation,
   productFindBrandReqQueryValidation,
   productFindTagReqQueryValidation,
-  getAllProductsValidation
+  getAllProductsValidation,
+  registerValidation,
+  loginValidation
 };

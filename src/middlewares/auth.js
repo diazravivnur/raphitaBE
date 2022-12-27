@@ -1,27 +1,25 @@
 const jwt = require("jsonwebtoken");
+require("dotenv").config();
+const secretKey = process.env.SECRETKEY;
 
-exports.auth = (req, res, next) => {
+exports.auth = (request, res, next) => {
   try {
-    let header = req.header("Authorization");
+    const header = request.headers.authorization;
+    let token = header && header.replace("Bearer ", "");
 
-    let token = header.replace("Bearer ", "");
-
-    if (!header || !token) {
+    if (!token) {
       return res.send({
         status: "Failed",
-        message: "Access Denied",
+        message: "Access Denied, You Have to login first",
       });
     }
 
-    const secretKey = "myCustomPassword";
-
     const verified = jwt.verify(token, secretKey);
-
-    req.userId = verified.id;
+    request.userId = verified.id;
 
     next();
   } catch (error) {
-    console.log(error);
+    console.log(111, error);
     res.status(500).send({
       status: "failed",
       message: "server error",

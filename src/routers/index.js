@@ -46,45 +46,54 @@ const {
   getProductsRecommendation,
 } = require("../controllers/products")
 
+const {
+  register,
+  loginUser
+} = require("../controllers/users")
+
 // ROUTE CATEGORY API
-router.post("/category", postCategory)
+router.post("/category", auth, postCategory)
 router.get("/categories", getAllCategories)
 router.get("/category", getDetailsCategory)
-router.delete("/category", deleteCategory)
-router.put("/category", updateCategory)
+router.delete("/category", auth, deleteCategory)
+router.put("/category", auth, updateCategory)
 
 // ROUTE TAG API
-router.post("/tag", postTag)
-router.get("/tags", getAllTags)
+router.post("/tag", auth, postTag)
+router.get("/tags",  getAllTags)
 router.get("/tag", getDetailTag)
-router.delete("/tag", deleteTag)
-router.put("/tag", updateTag)
+router.delete("/tag", auth,  deleteTag)
+router.put("/tag", auth, updateTag)
 
 // ROUTE MEDIA API
-router.post("/media", uploadFile("media_file"), postMedia)
+router.post("/media", auth, uploadFile("media_file"), postMedia)
 router.get("/medias", getAllMedia)
 router.get("/media", getDetailsMedia)
-router.delete("/media", deleteMedia)
-router.put("/media", uploadFile("media_file"), updateMedia)
+router.delete("/media", auth,  deleteMedia)
+router.put("/media", auth,  uploadFile("media_file"), updateMedia)
 
 // ROUTE BRAND API
 router.post("/brand", uploadFile("media_file"), postBrands)
 router.get("/brands", getAllBrands)
 router.get("/brand", getDetailsBrand)
-router.delete("/brand", deleteBrand)
-router.put("/brand/logo", uploadFile("media_file"), updateBrandLogo)
-router.put("/brand/data", uploadFile("media_file"), updateBrandData)
-router.put("/brand/publish", setPublishedBrand)
-router.put("/brand/unpublish", unPublishBrand)
+router.delete("/brand", auth, deleteBrand)
+router.put("/brand/logo", auth, uploadFile("media_file"), updateBrandLogo)
+router.put("/brand/data", auth, uploadFile("media_file"), updateBrandData)
+router.put("/brand/publish", auth, setPublishedBrand)
+router.put("/brand/unpublish", auth, unPublishBrand)
 
 // ROUTE PRODUCTS API
 router.get("/products", getAllProducts)
-router.post("/product", postProducts)
-router.post("/product-media", addProductAndMedia)
-router.post("/product-tag", addProductTags)
+router.post("/product", auth, postProducts)
+router.post("/product-media", auth, addProductAndMedia)
+router.post("/product-tag", auth, addProductTags)
 router.get("/product", getDetailProduct)
 router.get("/product-brand", getAllProductsWhereBrand)
 router.get("/product-tag", getAllProductsWhereTag)
 router.get("/product-recommendation", getProductsRecommendation)
+
+// ROUTE USERS API
+router.post("/register", register)
+router.post("/login", loginUser)
 
 module.exports = router
