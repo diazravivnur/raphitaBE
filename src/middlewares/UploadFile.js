@@ -1,37 +1,39 @@
-const multer = require("multer");
-const Boom = require("boom");
+const multer = require('multer');
+const Boom = require('boom');
 
 exports.uploadFile = (imageFile, videoFile) => {
   //initialisasi multer diskstorage
   //menentukan destionation file diupload
   //menentukan nama file (rename agar tidak ada nama file ganda)
-  const fileName = "";
+  const fileName = '';
   const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(null, "uploads"); //lokasi penyimpan file
+      cb(null, 'uploads'); //lokasi penyimpan file
     },
     filename: function (req, file, cb) {
-      cb(null, Date.now() + "-" + file.originalname.replace(/\s/g, "")); //rename nama file by date now + nama original
+      cb(null, Date.now() + '-' + file.originalname.replace(/\s/g, '')); //rename nama file by date now + nama original
     },
   });
 
   //function untuk filter file berdasarkan type
   const fileFilter = function (req, file, cb) {
     if (file.fieldname === imageFile) {
-      if (!file.originalname.match(/\.(jpg|JPG|jpeg|JPEG|png|PNG|SVG|svg)$/)) {
+      if (
+        !file.originalname.match(/\.(jpg|JPG|jpeg|JPEG|png|PNG|SVG|svg|webp)$/)
+      ) {
         req.fileValidationError = {
-          message: "Only image files are allowed!",
+          message: 'Only image files are allowed!',
         };
-        return cb(new Error("Only image files are allowed!"), false);
+        return cb(new Error('Only image files are allowed!'), false);
       }
     }
 
     if (file.fieldname === videoFile) {
       if (!file.originalname.match(/\.(mp4|mkv)$/)) {
         req.fileValidationError = {
-          message: "Only Video files are allowed!",
+          message: 'Only Video files are allowed!',
         };
-        return cb(new Error("Only Video files are allowed!"), false);
+        return cb(new Error('Only Video files are allowed!'), false);
       }
     }
     cb(null, true);
@@ -67,13 +69,13 @@ exports.uploadFile = (imageFile, videoFile) => {
 
       //munculkan error jika file tidak disediakan
       if (!req.files.media_file)
-        return res.status(400).send(Boom.badRequest("PLEASE_ADD_MEDIA_FILE"));
+        return res.status(400).send(Boom.badRequest('PLEASE_ADD_MEDIA_FILE'));
 
       //munculkan error jika melebihi max size
       if (err) {
-        if (err.code === "LIMIT_FILE_SIZE") {
+        if (err.code === 'LIMIT_FILE_SIZE') {
           return res.status(400).send({
-            message: "Max file sized 10MB",
+            message: 'Max file sized 10MB',
           });
         }
         return res.status(400).send(err);
