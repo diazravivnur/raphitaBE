@@ -7,7 +7,6 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const secretKey = process.env.SECRETKEY;
-console.log(secretKey)
 // const jwt_decode = require('jwt-decode');
 
 exports.register = async (request, res) => {

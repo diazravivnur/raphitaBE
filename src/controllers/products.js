@@ -55,6 +55,7 @@ exports.getAllProducts = async (request, res) => {
             as: "medias",
           },
         ],
+        order: [['brandId', 'asc']],
         attributes: {
           exclude: ["createdAt", "updatedAt"],
         },
@@ -76,6 +77,7 @@ exports.getAllProducts = async (request, res) => {
             as: "tags",
           },
         ],
+        order: [['brandId', 'asc']],
         attributes: {
           exclude: ["createdAt", "updatedAt"],
         },
