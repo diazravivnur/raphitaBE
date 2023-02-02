@@ -4,7 +4,7 @@ const router = express.Router()
 
 const { auth } = require("../middlewares/auth")
 const { uploadFile } = require("../middlewares/UploadFile")
-const { uploadMediaFile } = require("../middlewares/UploadMediaFile")
+const { uploadMedia } = require("../middlewares/UploadMediaFile")
 
 const {
   postCategory,
@@ -22,6 +22,7 @@ const {
   getDetailsMedia,
   deleteMedia,
   updateMedia,
+  postMediaAndProducts,
 } = require("../controllers/media")
 
 const {
@@ -66,14 +67,15 @@ router.delete("/tag", auth,  deleteTag)
 router.put("/tag", auth, updateTag)
 
 // ROUTE MEDIA API
-router.post("/media", auth, uploadFile("media_file"), postMedia)
+router.post("/media", uploadMedia("media_files"),  postMedia)
+router.post("/v2/product", uploadMedia("media_files"),  postMediaAndProducts)
 router.get("/medias", getAllMedia)
 router.get("/media", getDetailsMedia)
 router.delete("/media", auth,  deleteMedia)
 router.put("/media", auth,  uploadFile("media_file"), updateMedia)
 
 // ROUTE BRAND API
-router.post("/brand", uploadFile("media_file"), postBrands)
+router.post("/brand", uploadMedia("media_files"), postBrands)
 router.get("/brands", getAllBrands)
 router.get("/brand", getDetailsBrand)
 router.delete("/brand", auth, deleteBrand)
@@ -84,7 +86,7 @@ router.put("/brand/unpublish", auth, unPublishBrand)
 
 // ROUTE PRODUCTS API
 router.get("/products", getAllProducts)
-router.post("/product", auth, postProducts)
+router.post("/product", uploadMedia("media_files"), postProducts)
 router.post("/product-media", auth, addProductAndMedia)
 router.post("/product-tag", auth, addProductTags)
 router.get("/product", getDetailProduct)

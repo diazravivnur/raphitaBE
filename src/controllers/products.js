@@ -1,9 +1,14 @@
 const { Products, Brands, Media, MediaProducts, TagProducts, Tags } = require("../../models")
 const { Op } = require("sequelize")
 const Boom = require("boom")
+const Fs = require('fs');
+
 const validationHelper = require("../helpers/validationHelper")
 const deleteFileHelper = require("../helpers/deleteFileHelper")
 const sequelize = require("sequelize")
+const mediaLocation = 'https://api.raphitajayamandiri.com/';
+const { __postMediaToDB } = require("../controllers/media")
+
 
 exports.getAllProducts = async (request, res) => {
   // validate req.body
@@ -100,16 +105,46 @@ exports.getAllProducts = async (request, res) => {
   }
 }
 
+const __postProductsToDB = async (request) => {
+  try {
+    // add to db
+    const inputData = await Products.create({
+      ...request.body,
+    })
+  return inputData
+  } catch (error) {
+    console.log(error)
+  }
+};
+
 exports.postProducts = async (request, res) => {
   try {
     // validate req.body
-    const { error } = validationHelper.postProductsValidation(request.body)
-    if (error) return res.status(400).send(Boom.badRequest(error.details[0].message))
+    // const { error } = validationHelper.postProductsValidation(request.body)
+    // if (error) return res.status(400).send(Boom.badRequest(error.details[0].message))
+    const postedMedia = await __postMediaToDB(request)
+    const idPostedMedia = postedMedia.map(item=>(item.id))
 
-    // add to db
-    const response = await Products.create({
-      ...request.body,
-    })
+    const postedProducts = await __postProductsToDB(request)
+    const idPostedProducts = postedProducts.id
+    const dataPostedToMediaProduct = [ 
+      {
+        "ProductId" : idPostedProducts,
+        "mediaId" : idPostedMedia[0]
+      },
+      {
+        "ProductId" : idPostedProducts,
+        "mediaId" : idPostedMedia[1]
+      },
+      {
+        "ProductId" : idPostedProducts,
+        "mediaId" : idPostedMedia[2]
+      }
+    ]
+    console.log(dataPostedToMediaProduct)
+
+    const response = await MediaProducts.bulkCreate(dataPostedToMediaProduct);
+
 
     res.status(200).send({
       statusCode: "200",
@@ -131,9 +166,9 @@ exports.addProductAndMedia = async (request, res) => {
     const { error } = validationHelper.mediaProductsValidation(request.body)
     if (error) return res.status(400).send(Boom.badRequest(error.details[0].message))
     // add to db
-    const response = await MediaProducts.create({
-      ...request.body,
-    })
+    // const response = await MediaProducts.bulkCreate({
+    //   ...request.body,
+    // })
 
     res.status(200).send({
       statusCode: "200",

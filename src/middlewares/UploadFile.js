@@ -8,7 +8,7 @@ exports.uploadFile = (imageFile, videoFile) => {
   const fileName = '';
   const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(null, 'uploads'); //lokasi penyimpan file
+      cb(null, 'uploads/media'); //lokasi penyimpan file
     },
     filename: function (req, file, cb) {
       cb(null, Date.now() + '-' + file.originalname.replace(/\s/g, '')); //rename nama file by date now + nama original

@@ -6,11 +6,15 @@ const deleteFileHelper = require('../helpers/deleteFileHelper');
 
 exports.postMedia = async (request, res) => {
   try {
-    const media = request.files.media_file[0].filename;
-    // add to db
-    const response = await Media.create({
-      media_url: mediaLocation + media,
+    const media = request.files.media_files;
+    const arr = media.map((item) => {
+      return { media_url: item.filename}
     });
+    // add to db
+    const response = await Media.bulkCreate(arr, 
+    {
+        fields:["media_url"] 
+    } );
 
     res.status(200).send({
       statusCode: '200',
@@ -22,6 +26,23 @@ exports.postMedia = async (request, res) => {
       status: 'failed',
       message: error,
     });
+  }
+};
+
+exports.__postMediaToDB = async (request, res) => {
+  try {
+    const media = request.files.media_files;
+    const arr = media.map((item) => {
+      return { media_url: item.filename}
+    });
+    // add to db
+    const inputData = await Media.bulkCreate(arr, 
+    {
+        fields:["media_url"] 
+    } );
+  return inputData
+  } catch (error) {
+    console.log(error)
   }
 };
 
@@ -139,6 +160,33 @@ exports.updateMedia = async (request, res) => {
     });
   } catch (error) {
     console.log(error);
+    res.status(500).send({
+      status: 'failed',
+      message: error,
+    });
+  }
+};
+
+
+exports.postMediaAndProducts = async (request, res) => {
+  try {
+    const media = request.files.media_files;
+    const arr = media.map((item) => {
+      return { media_url: item.filename}
+    });
+    console.log(111, arr)
+    // add to db
+    const response = await Media.bulkCreate(arr, 
+      {
+          fields:["media_url"] 
+      } );
+
+    res.status(200).send({
+      statusCode: '200',
+      status: 'Success',
+      data: response,
+    });
+  } catch (error) {
     res.status(500).send({
       status: 'failed',
       message: error,
