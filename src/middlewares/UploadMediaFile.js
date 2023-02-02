@@ -1,37 +1,39 @@
-const multer = require("multer");
-const Boom = require("boom");
+const multer = require('multer');
+const Boom = require('boom');
 
-exports.uploadMediaFile = (imageFile, videoFile) => {
+exports.uploadMedia = (imageFile, videoFile) => {
   //initialisasi multer diskstorage
   //menentukan destionation file diupload
   //menentukan nama file (rename agar tidak ada nama file ganda)
-  const fileName = "";
+  const fileName = '';
   const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(null, "uploads/media"); //lokasi penyimpan file
+      cb(null, 'uploads'); //lokasi penyimpan file
     },
     filename: function (req, file, cb) {
-      cb(null, Date.now() + "-" + file.originalname.replace(/\s/g, "")); //rename nama file by date now + nama original
+      cb(null, Date.now() + '-' + file.originalname.replace(/\s/g, '')); //rename nama file by date now + nama original
     },
   });
 
   //function untuk filter file berdasarkan type
   const fileFilter = function (req, file, cb) {
     if (file.fieldname === imageFile) {
-      if (!file.originalname.match(/\.(jpg|JPG|jpeg|JPEG|png|PNG|SVG|svg)$/)) {
+      if (
+        !file.originalname.match(/\.(jpg|JPG|jpeg|JPEG|png|PNG|SVG|svg|webp)$/)
+      ) {
         req.fileValidationError = {
-          message: "Only image files are allowed!",
+          message: 'Only image files are allowed!',
         };
-        return cb(new Error("Only image files are allowed!"), false);
+        return cb(new Error('Only image files are allowed!'), false);
       }
     }
 
     if (file.fieldname === videoFile) {
       if (!file.originalname.match(/\.(mp4|mkv)$/)) {
         req.fileValidationError = {
-          message: "Only Video files are allowed!",
+          message: 'Only Video files are allowed!',
         };
-        return cb(new Error("Only Video files are allowed!"), false);
+        return cb(new Error('Only Video files are allowed!'), false);
       }
     }
     cb(null, true);
@@ -50,31 +52,26 @@ exports.uploadMediaFile = (imageFile, videoFile) => {
   }).fields([
     {
       name: imageFile,
-      maxCount: 1,
-    },
-    {
-      name: videoFile,
-      maxCount: 1,
-    },
+      maxCount: 5,
+    }
   ]); //fields digunakan karena file yang diupload lebih dari 1 fields
 
   //middleware handler
   return (req, res, next) => {
     upload(req, res, function (err) {
-        console.log(1111, req.files[0]);
       //munculkan error jika validasi gagal
       if (req.fileValidationError)
         return res.status(400).send(req.fileValidationError);
 
       //munculkan error jika file tidak disediakan
-      if (!req.files.media_file)
-        return res.status(400).send(Boom.badRequest("PLEASE_ADD_MEDIA_FILE"));
+      if (!req.files.media_files)
+        return res.status(400).send(Boom.badRequest('PLEASE_ADD_MEDIA_FILE'));
 
       //munculkan error jika melebihi max size
       if (err) {
-        if (err.code === "LIMIT_FILE_SIZE") {
+        if (err.code === 'LIMIT_FILE_SIZE') {
           return res.status(400).send({
-            message: "Max file sized 10MB",
+            message: 'Max file sized 10MB',
           });
         }
         return res.status(400).send(err);

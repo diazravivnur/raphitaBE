@@ -98,13 +98,14 @@ const postProductsValidation = (data) => {
     summary: Joi.string().required(),
     brandId: Joi.number().required(),
     description: Joi.string().optional(),
+    media_files: Joi.array().required(),
   });
   return schema.validate(data);
 };
 
 const mediaProductsValidation = (data) => {
   const schema = Joi.object({
-    mediaId: Joi.number().required(),
+    mediaId: Joi.array().required(),
     ProductId: Joi.number().required(),
   });
   return schema.validate(data);
