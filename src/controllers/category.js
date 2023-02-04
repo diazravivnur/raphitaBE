@@ -6,8 +6,7 @@ exports.postCategory = async (request, res) => {
   try {
     // validate req.body
     const { error } = validationHelper.postCategoryValidation(request.body);
-    if (error)
-      return res.status(400).send(Boom.badRequest(error.details[0].message));
+    if (error) return res.status(400).send(Boom.badRequest(error.details[0].message));
     const { category_name } = request.body;
 
     // find similar category in db
@@ -60,11 +59,8 @@ exports.getAllCategories = async (req, res) => {
 exports.getDetailsCategory = async (request, res) => {
   try {
     // validate req.query
-    const { error } = validationHelper.categoryReqQueryValidation(
-      request.query
-    );
-    if (error)
-      return res.status(400).send(Boom.badRequest(error.details[0].message));
+    const { error } = validationHelper.categoryReqQueryValidation(request.query);
+    if (error) return res.status(400).send(Boom.badRequest(error.details[0].message));
 
     const { categoryID } = request.query;
 
@@ -97,11 +93,8 @@ exports.getDetailsCategory = async (request, res) => {
 exports.deleteCategory = async (request, res) => {
   try {
     // validate req.query
-    const { error } = validationHelper.categoryReqQueryValidation(
-      request.query
-    );
-    if (error)
-      return res.status(400).send(Boom.badRequest(error.details[0].message));
+    const { error } = validationHelper.categoryReqQueryValidation(request.query);
+    if (error) return res.status(400).send(Boom.badRequest(error.details[0].message));
 
     const { categoryID } = request.query;
 
@@ -144,8 +137,7 @@ exports.updateCategory = async (request, res) => {
     const { error } =
       validationHelper.updateCategoryValidation(request.body) &&
       validationHelper.categoryReqQueryValidation(request.query);
-    if (error)
-      return res.status(400).send(Boom.badRequest(error.details[0].message));
+    if (error) return res.status(400).send(Boom.badRequest(error.details[0].message));
 
     const { categoryID } = request.query;
     const { category_name } = request.body;

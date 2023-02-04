@@ -9,8 +9,7 @@ const mediaLocationProd = "https://api.raphitajayamandiri.com/";
 exports.postBrands = async (request, res) => {
   try {
     const { error } = validationHelper.postBrandValidation(request.body);
-    if (error)
-      return res.status(400).send(Boom.badRequest(error.details[0].message));
+    if (error) return res.status(400).send(Boom.badRequest(error.details[0].message));
     const logoFile = request.files.media_file[0].filename;
     // add to db
 
@@ -59,8 +58,7 @@ exports.getDetailsBrand = async (request, res) => {
   try {
     // validate req.query
     const { error } = validationHelper.brandReqQueryValidation(request.query);
-    if (error)
-      return res.status(400).send(Boom.badRequest(error.details[0].message));
+    if (error) return res.status(400).send(Boom.badRequest(error.details[0].message));
 
     const { brandID } = request.query;
 
@@ -94,17 +92,14 @@ exports.deleteBrand = async (request, res) => {
   try {
     // validate req.query
     const { error } = validationHelper.brandReqQueryValidation(request.query);
-    if (error)
-      return res.status(400).send(Boom.badRequest(error.details[0].message));
+    if (error) return res.status(400).send(Boom.badRequest(error.details[0].message));
 
     const { brandID } = request.query;
 
     // find similar brand in db
     const findByID = await Brands.findByPk(brandID);
     if (findByID === null) {
-      return res
-        .status(400)
-        .send(Boom.badRequest(`Brand on id ${brandID} Not Found`));
+      return res.status(400).send(Boom.badRequest(`Brand on id ${brandID} Not Found`));
     }
 
     // delete file on folder uploads
@@ -134,17 +129,14 @@ exports.setPublishedBrand = async (request, res) => {
   try {
     // validate req.query
     const { error } = validationHelper.brandReqQueryValidation(request.query);
-    if (error)
-      return res.status(400).send(Boom.badRequest(error.details[0].message));
+    if (error) return res.status(400).send(Boom.badRequest(error.details[0].message));
 
     const { brandID } = request.query;
 
     // find similar brand in db
     const findByID = await Brands.findByPk(brandID);
     if (findByID === null) {
-      return res
-        .status(400)
-        .send(Boom.badRequest(`Brand on id ${brandID} Not Found`));
+      return res.status(400).send(Boom.badRequest(`Brand on id ${brandID} Not Found`));
     }
     await Brands.update(
       { isPublished: true },
@@ -171,17 +163,14 @@ exports.unPublishBrand = async (request, res) => {
   try {
     // validate req.query
     const { error } = validationHelper.brandReqQueryValidation(request.query);
-    if (error)
-      return res.status(400).send(Boom.badRequest(error.details[0].message));
+    if (error) return res.status(400).send(Boom.badRequest(error.details[0].message));
 
     const { brandID } = request.query;
 
     // find similar brand in db
     const findByID = await Brands.findByPk(brandID);
     if (findByID === null) {
-      return res
-        .status(400)
-        .send(Boom.badRequest(`Brand on id ${brandID} Not Found`));
+      return res.status(400).send(Boom.badRequest(`Brand on id ${brandID} Not Found`));
     }
     await Brands.update(
       { isPublished: false },
@@ -212,9 +201,7 @@ exports.updateBrandLogo = async (request, res) => {
     // find similar brand in db
     const findByID = await Brands.findByPk(brandID);
     if (findByID === null) {
-      return res
-        .status(400)
-        .send(Boom.badRequest(`Brand on id ${brandID} Not Found`));
+      return res.status(400).send(Boom.badRequest(`Brand on id ${brandID} Not Found`));
     }
 
     // delete file on folder uploads
@@ -255,15 +242,12 @@ exports.updateBrandData = async (request, res) => {
     const { brandID } = request.query;
     const logoFile = request.files.media_file[0].filename;
     const { error } = validationHelper.postBrandValidation(request.body);
-    if (error)
-      return res.status(400).send(Boom.badRequest(error.details[0].message));
+    if (error) return res.status(400).send(Boom.badRequest(error.details[0].message));
 
     // find similar brand in db
     const findByID = await Brands.findByPk(brandID);
     if (findByID === null) {
-      return res
-        .status(400)
-        .send(Boom.badRequest(`Brand on id ${brandID} Not Found`));
+      return res.status(400).send(Boom.badRequest(`Brand on id ${brandID} Not Found`));
     }
 
     // update data by PK

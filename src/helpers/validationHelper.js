@@ -129,7 +129,7 @@ const productReqQueryValidation = (data) => {
 const productFindBrandReqQueryValidation = (data) => {
   const schema = Joi.object({
     brandId: Joi.number().required(),
-    page: Joi.number().required()
+    page: Joi.number().required(),
   });
   return schema.validate(data);
 };
@@ -137,7 +137,7 @@ const productFindBrandReqQueryValidation = (data) => {
 const productFindTagReqQueryValidation = (data) => {
   const schema = Joi.object({
     tagId: Joi.array().required(),
-    page: Joi.number().required()
+    page: Joi.number().required(),
   });
   return schema.validate(data);
 };
@@ -145,6 +145,7 @@ const productFindTagReqQueryValidation = (data) => {
 const getAllProductsValidation = (data) => {
   const schema = Joi.object({
     page: Joi.number().required(),
+    limit: Joi.number().optional(),
     brandId: Joi.number().optional(),
     tagId: Joi.number().optional(),
   });
@@ -168,9 +169,6 @@ const loginValidation = (data) => {
   return schema.validate(data);
 };
 
-
-
-
 module.exports = {
   postCategoryValidation,
   categoryReqQueryValidation,
@@ -191,5 +189,5 @@ module.exports = {
   productFindTagReqQueryValidation,
   getAllProductsValidation,
   registerValidation,
-  loginValidation
+  loginValidation,
 };

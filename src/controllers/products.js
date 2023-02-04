@@ -1,23 +1,23 @@
-const { Products, Brands, Media, MediaProducts, TagProducts, Tags } = require("../../models")
-const { Op } = require("sequelize")
-const Boom = require("boom")
-const Fs = require('fs');
+const { Products, Brands, Media, MediaProducts, TagProducts, Tags } = require("../../models");
+const { Op } = require("sequelize");
+const Boom = require("boom");
+const Fs = require("fs");
 
-const validationHelper = require("../helpers/validationHelper")
-const deleteFileHelper = require("../helpers/deleteFileHelper")
-const sequelize = require("sequelize")
-const mediaLocation = 'https://api.raphitajayamandiri.com/';
-const { __postMediaToDB } = require("../controllers/media")
-
+const validationHelper = require("../helpers/validationHelper");
+const deleteFileHelper = require("../helpers/deleteFileHelper");
+const sequelize = require("sequelize");
+const mediaLocation = "https://api.raphitajayamandiri.com/";
+const { __postMediaToDB } = require("../controllers/media");
 
 exports.getAllProducts = async (request, res) => {
   // validate req.body
-  const { error } = validationHelper.getAllProductsValidation(request.query)
-  if (error) return res.status(400).send(Boom.badRequest(error.details[0].message))
+  const { error } = validationHelper.getAllProductsValidation(request.query);
+  if (error) return res.status(400).send(Boom.badRequest(error.details[0].message));
   try {
-    const { page, brandId, tagId } = request.query
-    const pageInt = parseInt(page)
-    let products
+    const { page, limit, brandId, tagId } = request.query;
+    const pageInt = parseInt(page);
+    const limitInt = parseInt(limit);
+    let products;
     if (brandId) {
       products = await Products.findAll({
         where: {
@@ -41,7 +41,7 @@ exports.getAllProducts = async (request, res) => {
         attributes: {
           exclude: ["createdAt", "updatedAt"],
         },
-      })
+      });
     } else if (tagId) {
       products = await Products.findAll({
         include: [
@@ -60,11 +60,11 @@ exports.getAllProducts = async (request, res) => {
             as: "medias",
           },
         ],
-        order: [['brandId', 'asc']],
+        order: [["brandId", "asc"]],
         attributes: {
           exclude: ["createdAt", "updatedAt"],
         },
-      })
+      });
     } else {
       products = await Products.findAll({
         include: [
@@ -82,38 +82,38 @@ exports.getAllProducts = async (request, res) => {
             as: "tags",
           },
         ],
-        order: [['brandId', 'asc']],
+        order: [["brandId", "asc"]],
         attributes: {
           exclude: ["createdAt", "updatedAt"],
         },
-      })
+      });
     }
 
-    const response = await paginationFunction(products, pageInt)
+    const response = await paginationFunction(products, pageInt, limitInt);
 
     res.status(200).send({
       statusCode: "200",
       status: "success",
       data: response,
-    })
+    });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(500).send({
       status: "failed",
       message: error,
-    })
+    });
   }
-}
+};
 
 const __postProductsToDB = async (request) => {
   try {
     // add to db
     const inputData = await Products.create({
       ...request.body,
-    })
-  return inputData
+    });
+    return inputData;
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
 };
 
@@ -122,49 +122,48 @@ exports.postProducts = async (request, res) => {
     // validate req.body
     // const { error } = validationHelper.postProductsValidation(request.body)
     // if (error) return res.status(400).send(Boom.badRequest(error.details[0].message))
-    const postedMedia = await __postMediaToDB(request)
-    const idPostedMedia = postedMedia.map(item=>(item.id))
+    const postedMedia = await __postMediaToDB(request);
+    const idPostedMedia = postedMedia.map((item) => item.id);
 
-    const postedProducts = await __postProductsToDB(request)
-    const idPostedProducts = postedProducts.id
-    const dataPostedToMediaProduct = [ 
+    const postedProducts = await __postProductsToDB(request);
+    const idPostedProducts = postedProducts.id;
+    const dataPostedToMediaProduct = [
       {
-        "ProductId" : idPostedProducts,
-        "mediaId" : idPostedMedia[0]
+        ProductId: idPostedProducts,
+        mediaId: idPostedMedia[0],
       },
       {
-        "ProductId" : idPostedProducts,
-        "mediaId" : idPostedMedia[1]
+        ProductId: idPostedProducts,
+        mediaId: idPostedMedia[1],
       },
       {
-        "ProductId" : idPostedProducts,
-        "mediaId" : idPostedMedia[2]
-      }
-    ]
-    console.log(dataPostedToMediaProduct)
+        ProductId: idPostedProducts,
+        mediaId: idPostedMedia[2],
+      },
+    ];
+    console.log(dataPostedToMediaProduct);
 
     const response = await MediaProducts.bulkCreate(dataPostedToMediaProduct);
-
 
     res.status(200).send({
       statusCode: "200",
       status: "Success",
       data: response,
-    })
+    });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(500).send({
       status: "failed",
       message: error,
-    })
+    });
   }
-}
+};
 
 exports.addProductAndMedia = async (request, res) => {
   try {
     // validate req.body
-    const { error } = validationHelper.mediaProductsValidation(request.body)
-    if (error) return res.status(400).send(Boom.badRequest(error.details[0].message))
+    const { error } = validationHelper.mediaProductsValidation(request.body);
+    if (error) return res.status(400).send(Boom.badRequest(error.details[0].message));
     // add to db
     // const response = await MediaProducts.bulkCreate({
     //   ...request.body,
@@ -174,50 +173,50 @@ exports.addProductAndMedia = async (request, res) => {
       statusCode: "200",
       status: "Success",
       data: response,
-    })
+    });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(500).send({
       status: "failed",
       message: error,
-    })
+    });
   }
-}
+};
 
 exports.addProductTags = async (request, res) => {
   try {
     // validate req.body
-    const { error } = validationHelper.tagsProductsValidation(request.body)
-    if (error) return res.status(400).send(Boom.badRequest(error.details[0].message))
+    const { error } = validationHelper.tagsProductsValidation(request.body);
+    if (error) return res.status(400).send(Boom.badRequest(error.details[0].message));
     // add to db
     const response = await TagProducts.create({
       ...request.body,
-    })
+    });
 
     res.status(200).send({
       statusCode: "200",
       status: "Success",
       data: response,
-    })
+    });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(500).send({
       status: "failed",
       message: error,
-    })
+    });
   }
-}
+};
 
 exports.getDetailProduct = async (request, res) => {
   try {
-    const { error } = validationHelper.productReqQueryValidation(request.query)
-    if (error) return res.status(400).send(Boom.badRequest(error.details[0].message))
-    const { productID } = request.query
+    const { error } = validationHelper.productReqQueryValidation(request.query);
+    if (error) return res.status(400).send(Boom.badRequest(error.details[0].message));
+    const { productID } = request.query;
 
     // find similar category in db
-    const findByID = await Products.findByPk(productID)
+    const findByID = await Products.findByPk(productID);
     if (findByID === null) {
-      return res.status(400).send(Boom.badRequest("MEDIA_NOT_FOUND"))
+      return res.status(400).send(Boom.badRequest("MEDIA_NOT_FOUND"));
     }
 
     // get data by PK
@@ -243,26 +242,26 @@ exports.getDetailProduct = async (request, res) => {
       attributes: {
         exclude: ["createdAt", "updatedAt"],
       },
-    })
+    });
 
     return res.status(200).send({
       statusCode: "200",
       status: "Success",
       data: response,
-    })
+    });
   } catch (error) {
     res.status(500).send({
       status: "failed",
       message: error,
-    })
+    });
   }
-}
+};
 
 exports.getAllProductsWhereBrand = async (request, res) => {
-  const { error } = validationHelper.productFindBrandReqQueryValidation(request.query)
-  if (error) return res.status(400).send(Boom.badRequest(error.details[0].message))
-  const { brandId, page } = request.query
-  const pageInt = parseInt(page)
+  const { error } = validationHelper.productFindBrandReqQueryValidation(request.query);
+  if (error) return res.status(400).send(Boom.badRequest(error.details[0].message));
+  const { brandId, page } = request.query;
+  const pageInt = parseInt(page);
   try {
     const products = await Products.findAll({
       where: {
@@ -286,28 +285,28 @@ exports.getAllProductsWhereBrand = async (request, res) => {
       attributes: {
         exclude: ["createdAt", "updatedAt"],
       },
-    })
-    const response = await paginationFunction(products, pageInt)
+    });
+    const response = await paginationFunction(products, pageInt);
 
     res.status(200).send({
       statusCode: "200",
       status: "success",
       data: response,
-    })
+    });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(500).send({
       status: "failed",
       message: error,
-    })
+    });
   }
-}
+};
 
 exports.getAllProductsWhereTag = async (request, res) => {
-  const { error } = validationHelper.productFindTagReqQueryValidation(request.body)
-  if (error) return res.status(400).send(Boom.badRequest(error.details[0].message))
-  const { tagId, page } = request.body
-  const pageInt = parseInt(page)
+  const { error } = validationHelper.productFindTagReqQueryValidation(request.body);
+  if (error) return res.status(400).send(Boom.badRequest(error.details[0].message));
+  const { tagId, page } = request.body;
+  const pageInt = parseInt(page);
   try {
     const products = await Products.findAll({
       include: [
@@ -320,23 +319,23 @@ exports.getAllProductsWhereTag = async (request, res) => {
       attributes: {
         exclude: ["createdAt", "updatedAt"],
       },
-    })
+    });
 
-    const response = await paginationFunction(products, pageInt)
+    const response = await paginationFunction(products, pageInt);
 
     res.status(200).send({
       statusCode: "200",
       status: "success",
       data: response,
-    })
+    });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(500).send({
       status: "failed",
       message: error,
-    })
+    });
   }
-}
+};
 
 exports.getProductsRecommendation = async (request, res) => {
   try {
@@ -361,7 +360,7 @@ exports.getProductsRecommendation = async (request, res) => {
       attributes: {
         exclude: ["createdAt", "updatedAt"],
       },
-    })
+    });
 
     const sinoamigoProduct = await Products.findAll({
       limit: 4,
@@ -384,46 +383,45 @@ exports.getProductsRecommendation = async (request, res) => {
       attributes: {
         exclude: ["createdAt", "updatedAt"],
       },
-    })
+    });
 
-    const response = [...vyrtychProduct, ...sinoamigoProduct]
+    const response = [...vyrtychProduct, ...sinoamigoProduct];
 
     res.status(200).send({
       statusCode: "200",
       status: "success",
       data: response,
-    })
+    });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(500).send({
       status: "failed",
       message: error,
-    })
+    });
   }
-}
+};
 
-const paginationFunction = async (data, page) => {
-  const limit = 12
-  const startIndex = (page - 1) * limit
-  const endIndex = page * limit
+const paginationFunction = async (data, page, limit = 12) => {
+  const startIndex = (page - 1) * limit;
+  const endIndex = page * limit;
 
-  const results = {}
+  const results = {};
   if (endIndex < data.length) {
     results.next = {
       page: page + 1,
-    }
+    };
   }
   if (startIndex > 0) {
     results.previous = {
       page: page - 1,
-    }
+    };
   }
   results.currentPage = {
     startPage: 1,
     page,
     endPage: Math.ceil(data.length / limit),
-  }
-  results.count = data.length
-  results.rows = data.slice(startIndex, endIndex)
-  return results
-}
+  };
+  results.count = data.length;
+  results.rows = data.slice(startIndex, endIndex);
+  return results;
+};

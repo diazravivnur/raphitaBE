@@ -6,8 +6,7 @@ exports.postTag = async (request, res) => {
   try {
     // validate req.body
     const { error } = validationHelper.postTagValidation(request.body);
-    if (error)
-      return res.status(400).send(Boom.badRequest(error.details[0].message));
+    if (error) return res.status(400).send(Boom.badRequest(error.details[0].message));
     const { tag_name } = request.body;
 
     // find similar category in db
@@ -61,8 +60,7 @@ exports.getDetailTag = async (request, res) => {
   try {
     // validate req.query
     const { error } = validationHelper.tagReqQueryValidation(request.query);
-    if (error)
-      return res.status(400).send(Boom.badRequest(error.details[0].message));
+    if (error) return res.status(400).send(Boom.badRequest(error.details[0].message));
 
     const { tagID } = request.query;
 
@@ -96,8 +94,7 @@ exports.deleteTag = async (request, res) => {
   try {
     // validate req.query
     const { error } = validationHelper.tagReqQueryValidation(request.query);
-    if (error)
-      return res.status(400).send(Boom.badRequest(error.details[0].message));
+    if (error) return res.status(400).send(Boom.badRequest(error.details[0].message));
 
     const { tagID } = request.query;
 
@@ -138,8 +135,7 @@ exports.updateTag = async (request, res) => {
   try {
     // validate req.body
     const { error } = validationHelper.updateTagValidation(request.body);
-    if (error)
-      return res.status(400).send(Boom.badRequest(error.details[0].message));
+    if (error) return res.status(400).send(Boom.badRequest(error.details[0].message));
 
     const { tagID } = request.query;
     const { tag_name } = request.body;
